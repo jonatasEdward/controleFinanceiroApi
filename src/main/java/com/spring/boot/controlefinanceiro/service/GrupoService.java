@@ -1,13 +1,9 @@
 package com.spring.boot.controlefinanceiro.service;
 
-import com.spring.boot.controlefinanceiro.exception.custom.ApplicationException;
 import com.spring.boot.controlefinanceiro.exception.custom.NotFoundException;
 import com.spring.boot.controlefinanceiro.exception.custom.RegraNegocioException;
 import com.spring.boot.controlefinanceiro.model.Grupo;
-import com.spring.boot.controlefinanceiro.model.Pessoa;
 import com.spring.boot.controlefinanceiro.repository.GrupoRepository;
-import com.spring.boot.controlefinanceiro.repository.PessoaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,15 +26,20 @@ public class GrupoService {
     }
 
     public Grupo save(Grupo grupo) {
-        return this.repository.save(grupo);
+        if (repository.existsByNomeAndPessoaId(grupo.getNome(), grupo.getPessoa().getId())) {
+            throw new RegraNegocioException("Nome do grupo já existe para esta pessoa.");
+        }
+        return repository.save(grupo);
     }
 
-    public Grupo update(Grupo grupo) {
-        Grupo firstGrupo = this.findById(grupo.getId());
-        if (!grupo.getPessoa().getId().equals(firstGrupo.getPessoa().getId())) {
-            throw new RegraNegocioException("Propriedade é uma informação que nao é permitido alterar.");
+    public Grupo update(Grupo grupoAtualizado) {
+        Grupo grupoExistente = findById(grupoAtualizado.getId());
+        if (!grupoExistente.getNome().equals(grupoAtualizado.getNome()) && repository.existsByNomeAndPessoaId(grupoAtualizado.getNome(), grupoAtualizado.getPessoa().getId())) {
+            throw new RegraNegocioException("Nome do grupo já existe para esta pessoa.");
         }
-        return this.repository.save(grupo);
+        grupoExistente.setNome(grupoAtualizado.getNome());
+        // Atualizar outros atributos conforme necessário
+        return repository.save(grupoExistente);
     }
 
     public void delete(Long id) {

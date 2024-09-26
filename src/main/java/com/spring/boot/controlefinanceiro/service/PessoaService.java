@@ -1,6 +1,7 @@
 package com.spring.boot.controlefinanceiro.service;
 
 import com.spring.boot.controlefinanceiro.exception.custom.NotFoundException;
+import com.spring.boot.controlefinanceiro.exception.custom.RegraNegocioException;
 import com.spring.boot.controlefinanceiro.model.Pessoa;
 import com.spring.boot.controlefinanceiro.repository.PessoaRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,19 @@ public class PessoaService {
     }
 
     public Pessoa save(Pessoa pessoa) {
-        return this.repository.save(pessoa);
+        if (repository.existsByNome(pessoa.getNome())) {
+            throw new RegraNegocioException("Nome já cadastrado no sistema.");
+        }
+        return repository.save(pessoa);
     }
 
     public Pessoa update(Pessoa pessoa) {
-        return this.repository.save(pessoa);
+        Pessoa pessoaExistente = findById(pessoa.getId());
+        if (!pessoaExistente.getNome().equals(pessoa.getNome()) && repository.existsByNome(pessoa.getNome())) {
+            throw new RegraNegocioException("Nome já cadastrado no sistema.");
+        }
+        pessoaExistente.setNome(pessoa.getNome());
+        return repository.save(pessoaExistente);
     }
 
     public void delete(Long id) {

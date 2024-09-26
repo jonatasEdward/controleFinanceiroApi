@@ -1,6 +1,5 @@
 package com.spring.boot.controlefinanceiro.exception;
 
-import com.spring.boot.controlefinanceiro.exception.custom.ApplicationException;
 import com.spring.boot.controlefinanceiro.exception.custom.NotFoundException;
 import com.spring.boot.controlefinanceiro.exception.custom.RegraNegocioException;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(RegraNegocioException.class)
-    public ResponseEntity<ErrorResponse> handleApplicationdException(NotFoundException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleApplicationdException(RegraNegocioException ex, WebRequest request) {
         logger.error("Regra de Negocio: {}", ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),

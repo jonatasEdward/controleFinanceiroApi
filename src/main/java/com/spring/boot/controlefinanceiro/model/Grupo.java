@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
 @Table(name = "SENAI_GRUPO")
 public class Grupo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
     private String descricao;
@@ -24,4 +25,5 @@ public class Grupo {
     @ManyToOne
     @JoinColumn(name = "pessoa_id")
     private Pessoa pessoa;
+
 }
